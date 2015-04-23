@@ -1,0 +1,44 @@
+{
+  "name": "dhcp-hive-mind",
+  "version": "0.1.0",
+  "description": "Track DHCP leases in Redis.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wwu-nosql/dhcp-hive-mind.git"
+  },
+  "keywords": [
+    "DHCP",
+    "redis",
+    "NoSQL",
+    "database"
+  ],
+  "contributors": [
+    {
+      "name": "Bethany Long"
+    },
+    {
+      "name": "Aaron Griffin"
+    },
+    {
+      "name": "Reilly Tucker Siemens",
+      "email": "reilly.siemens@gmail.com",
+      "url": "https://tuckersiemens.com"
+    }
+  ],
+  "engines": {
+    "node": ">= 0.12.2"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wwu-nosql/dhcp-hive-mind/issues"
+  },
+  "homepage": "https://github.com/wwu-nosql/dhcp-hive-mind",
+  "private": true,
+  "dependencies": {
+    "redis": "^0.12.1"
+  }
+}
