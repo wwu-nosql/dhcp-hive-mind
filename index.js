@@ -1,6 +1,2 @@
 'use strict';
-module.exports = function DHCPHiveMind(opts) {
-  opts = opts || {};
-
-  return opts;
-}
+module.exports = require('./lib/dhcp-hive-mind');
