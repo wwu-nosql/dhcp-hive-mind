@@ -1,3 +1,4 @@
 #!/usr/bin/env node
-var DHCPHiveMind = require('../')();
+var opts = {}
+var DHCPHiveMind = require('../')(opts);
 DHCPHiveMind.serve();
