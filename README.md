@@ -3,17 +3,44 @@ Track DHCP leases in Redis.
 
 An example client/server exchange might look like this:
 ```
-DHCPDISCOVER client ------> {'mac': 'aa:bb:cc:dd:ee:ff',
-                             'hostname': 'foobar',
-                             'router': '10.0.0.1'} -----------------> broadcast
-# I have no layer 3 and what is this?
+client -> broadcast
+{ 
+  "msg_type": "DHCPDISCOVER",       # option 53
+  "client_mac": "my mac address",   # CHADDR
+  "hostname": "foobar",             # option 12
+  "relay_ip": "ip-helper address"   # GIADDR? (Set by relay agent)
+}
 
-DHCPOFFER    client <------ {'ip': '10.0.0.2'} <------------------------ server
-# Hey, use this IP.
+server -> client
+{ 
+  "msg_type": "DHCPOFFER",                  # option 53
+  "client_ip": "proposed ip addr",          # YIADDR
+  "client_mac": "client's mac address",     # CHADDR
+  "server_ip": "my ip addr",                # SIADDR / option 54
+  "relay_ip": "ip-helper address"           # GIADDR? (Set by server)
+  "lease_time": "lease length in seconds",  # option 51
+  "subnet_mask": "255.255.maybe.whatever",  # option 1
+  "router": "router's ip addr",             # option 3
+}
 
-DHCPREQUEST  client ------> {'ip': '10.0.0.2'} ------------------------> server
-# Hey, I want to use this IP.
+client -> broadcast/server
+{ 
+  "msg_type": "DHCPREQUEST",        # option 53
+  "client_ip": "requested ip addr", # option 50
+  "client_mac": "my mac address",   # CHADDR
+  "hostname": "foobar",             # option 12
+  "relay_ip": "ip-helper address"   # GIADDR? (Set by relay agent)
+}
 
-DHCPACK      client <------ {'lease end': 'some datetime'} <------------ server
-# K.
+server -> client
+{ 
+  "msg_type": "DHCPACK",                    # option 53
+  "client_ip": "ack'ed ip addr",            # YIADDR
+  "client_mac": "client's mac address",     # CHADDR
+  "server_ip": "my ip addr",                # SIADDR / option 54
+  "relay_ip": "ip-helper address"           # GIADDR? (Set by server)
+  "lease_time": "lease length in seconds",  # option 51
+  "subnet_mask": "255.255.maybe.whatever",  # option 1
+  "router": "router's ip addr",             # option 3
+}
 ```
