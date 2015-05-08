@@ -1,7 +1,8 @@
 # dhcp-hive-mind
 Track DHCP leases in Redis.
 
-An example client/server exchange might look like this:
+## Client-server message exchange format
+
 ```
 client -> broadcast
 { 
@@ -43,4 +44,30 @@ server -> client
   "subnet_mask": "255.255.maybe.whatever",  # option 1
   "router": "router's ip addr",             # option 3
 }
+```
+
+## Lease storage in Redis
+
+```
+> hset "67.201.248.10" "mac" "aa:bb:cc:dd:ee:ff"
+(integer) 1
+> hset "67.201.248.10" "hostname" "foobar"
+(integer) 1
+> expire "67.201.248.10" 1200
+(integer) 1
+> ttl "67.201.248.10"
+(integer) 1195
+> hgetall "67.201.248.10"
+1) "mac"
+2) "aa:bb:cc:dd:ee:ff"
+3) "hostname"
+4) "foobar"
+> hget "67.201.248.10" "mac"
+"aa:bb:cc:dd:ee:ff"
+> hget "67.201.248.10" "hostname"
+"foobar"
+
+Fields are mac address and hostname.
+
+When a lease is granted (or renewed), the key's "expires" should be set to the lease length in seconds.
 ```
