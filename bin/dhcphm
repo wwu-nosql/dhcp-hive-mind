@@ -1,4 +1,9 @@
 #!/usr/bin/env node
-var opts = {}
+var path = require('path');
+
+var opts = {
+  rootDir: path.normalize(__dirname + '/..')
+}
+
 var DHCPHiveMind = require('../')(opts);
 DHCPHiveMind.serve();
