@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 var path = require('path');
 
+// Set the root directory for dhcphm so we know where to load the config from.
 var opts = {
   rootDir: path.normalize(__dirname + '/..')
 }
