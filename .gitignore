@@ -27,4 +27,4 @@ build/Release
 node_modules
 
 # Ignore the configuration directory.
-config
+config/config.json
