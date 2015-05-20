@@ -1,6 +1,33 @@
 # dhcp-hive-mind
 Track DHCP leases in Redis.
 
+## Example Configuration
+
+A sample `config/config.json` might look something like this:
+```
+{
+  "hostname": "dhcphm.localhost.localdomain",
+  "interface": "localhost",
+  "port": 1067,
+  "subnets": [
+    {
+      "subnet": "67.201.192.0/24",
+      "router": "67.201.192.1",
+      "dynStart": "67.201.192.9",
+      "dynEnd": "67.201.192.250",
+      "leaseTime": 1200
+    },
+    {
+      "subnet": "140.160.138.0/24",
+      "router": "140.160.138.1",
+      "dynStart": "140.160.138.2",
+      "dynEnd": "140.160.138.254",
+      "leaseTime": 1600
+    }
+  ]
+}
+```
+
 ## Client-server message exchange format
 
 ```
