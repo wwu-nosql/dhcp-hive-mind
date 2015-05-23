@@ -299,7 +299,7 @@ function randomBroadcast() {
 function randomRequest() {
   var relay_ip = config.subnets[Math.floor(Math.random()*
       config.subnets.length)].router;
-  var ip = randomIP(relay_ip.split('.').slice(0,3).join('.'));
+  var ip = randomIP(relay_ip.split('.').slice(0,3).join('.')+'.');
   var hostname = randomWords(3);
   var client_mac = randomMac();
   console.log(relay_ip);
@@ -311,6 +311,7 @@ function randomRequest() {
 // Send random request or broadcast message to server
 function sendRandom() {
   var rand = Math.random()<.5;
+  console.log("Sending: ");
   if (rand) {
     var message = randomRequest();
     console.log(JSON.stringify(message) + '\n');
@@ -324,6 +325,11 @@ function sendRandom() {
 
 client.connect(1067, '127.0.0.1', function() {
  console.log('Connected to server!');
+});
+
+client.on('data', function(data) {
+  console.log("Received: ");
+  console.log(data.toString('utf8'));
 });
 
 // Set random message sending to happen on random 1 to 3 second
