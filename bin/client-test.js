@@ -302,7 +302,6 @@ function randomRequest() {
   var ip = randomIP(relay_ip.split('.').slice(0,3).join('.')+'.');
   var hostname = randomWords(3);
   var client_mac = randomMac();
-  console.log(relay_ip);
   return {'msg_type': 'DHCPREQUEST', 'client_ip': ip,
         'client_mac': client_mac, 'hostname': hostname,
         'relay_ip': relay_ip};
