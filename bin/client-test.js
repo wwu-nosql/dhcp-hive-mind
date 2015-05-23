@@ -9,7 +9,6 @@ var client = new net.Socket();
 program
   .version('0.0.1')
   .description('Test client for dhcp-hive-mind')
-  .option('-a, --automate', 'Run client in automated mode')
   .parse(process.argv);
 
 // Giant wordlist is used to generate "random" hostnames
@@ -64,9 +63,7 @@ var wordList = [
   "cotton","could","count","country","couple","courage","course","court",
   "cover","cow","cowboy","crack","cream","create","creature","crew",
   "crop","cross","crowd","cry","cup","curious","current","curve",
-  "customs","cut","cutting","daily","damage","dance","danger","dangerous",
-  "dark","darkness","date","daughter","dawn","day","dead","deal",
-  "dear","death","decide","declared","deep","deeply","deer","definition",
+  "customs","cut","cutting","daily","damage","dance","danger","dangerous", "dark","darkness","date","daughter","dawn","day","dead","deal", "dear","death","decide","declared","deep","deeply","deer","definition",
   "degree","depend","depth","describe","desert","design","desk","detail",
   "determine","develop","development","diagram","diameter","did","die","differ",
   "difference","different","difficult","difficulty","dig","dinner","direct","direction",
@@ -292,23 +289,28 @@ function randomIP(prefix) {
 function randomBroadcast() {
   var hostname = randomWords(3);
   var client_mac = randomMac();
+  var relay_ip = config.subnets[Math.floor(Math.random()*
+      config.subnets.length)].router;
   return {'msg_type': 'DHCPDISCOVER', 'client_mac': client_mac,
-        'hostname': hostname, 'relay_ip': '192.168.1.1'};
+        'hostname': hostname, 'relay_ip': relay_ip};
 }
 
 // Generate random request message and return JSON object
 function randomRequest() {
-  var ip = randomIP();
+  var relay_ip = config.subnets[Math.floor(Math.random()*
+      config.subnets.length)].router;
+  var ip = randomIP(relay_ip.split('.').slice(0,3).join('.')+'.');
   var hostname = randomWords(3);
   var client_mac = randomMac();
   return {'msg_type': 'DHCPREQUEST', 'client_ip': ip,
         'client_mac': client_mac, 'hostname': hostname,
-        'relay_ip': '192.168.1.1'};
+        'relay_ip': relay_ip};
 }
 
 // Send random request or broadcast message to server
 function sendRandom() {
   var rand = Math.random()<.5;
+  console.log("Sending: ");
   if (rand) {
     var message = randomRequest();
     console.log(JSON.stringify(message) + '\n');
@@ -324,43 +326,19 @@ client.connect(1067, '127.0.0.1', function() {
  console.log('Connected to server!');
 });
 
-if (!program.automate) {
-  // Generate choices dialogue if in interactive mode
-  var send = [
-    {
-      type: 'list',
-      name: 'action',
-      message: 'What would you like to do?',
-      choices: ['broadcast', 'request'],
-    }
-  ];
-  // Prompt for choice of message
-  inquirer.prompt(send, function(answers) {
-    if (answers.action == 'broadcast') {
-      var hostname = randomWords(3);
-      var client_mac = randomMac();
-      var message = {'msg_type': 'DHCPDISCOVER',
-        'client_mac': client_mac, 'hostname': hostname,
-        'relay_ip': '192.168.1.1'};
+client.on('data', function(data) {
+  console.log("Received: ");
+  console.log(data.toString('utf8'));
+});
 
-      client.write(message);
-      console.log("Sending message:\n" + message);
-    } else if (answers.action == 'request') {
-      var ip = randomIP();
-      var hostname = randomWords(3);
-      var client_mac = randomMac();
-      var message = {'msg_type': 'DHCPREQUEST',
-        'client_ip': ip, 'client_mac': client_mac,
-        'hostname': hostname, 'relay_ip': '192.168.1.1'};
-
-      console.log("Sending message:\n" + message);
-      client.write(message);
-    }
-  });
-} else {
-  // Set random message sending to happen on random 1 to 3 second
-  // interval
-  console.log('Starting automated client...');
-  var delay = Math.floor(Math.random() * (3 - 1) + 1) * 1000;
-  setInterval(sendRandom , delay);
+// Set random message sending to happen on random 1 to 3 second
+// interval
+console.log('Reading configuration...');
+try {
+  var config = require('../config/config.json');
+} catch (err) {
+  var config = require('../config/defaultConfig.json');
 }
+console.log('Starting automated client...');
+var delay = Math.floor(Math.random() * (3 - 1) + 1) * 1000;
+setInterval(sendRandom , delay);

@@ -41,6 +41,7 @@
   "private": true,
   "dependencies": {
     "chalk": "^1.0.0",
+    "netmask": "^1.0.5",
     "redis": "^0.12.1"
   },
   "devDependencies": {
